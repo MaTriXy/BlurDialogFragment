@@ -3,17 +3,20 @@ BlurDialogFragment
 
 This project allows to display DialogFragment with a burring effect behind. The blurring part is achieved through FastBlur algorithm thanks to the impressive work of Pavlo Dudka (cf [Special Thanks](https://github.com/tvbarthel/BlurDialogFragment/#special-thanks-to-)). 
 
+[![Maven Central](http://img.shields.io/maven-central/v/fr.tvbarthel.blurdialogfragment/lib.svg)](http://search.maven.org/#search%7Cga%7C1%7Cblurdialogfragment)
+
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-BlurDialogFragment-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1064)
 
 * [Sample app](#sample-app)
+* [Gradle dependency](#gradle-dependency)
 * [Example](#example)
-* [Dependency](#dependency)
+* [Use RenderScript in Your Project] (#use-renderscript-in-your-project)
 * [Simple usage using inheritance](#simple-usage-using-inheritance)
+* [Customize your blurring effect](#customize-your-blurring-effect)
 * [Avoiding inheritance](#avoiding-inheritance)
 * [Benchmark](#benchmark)
 * [Known bugs](#known-bugs)
 * [RenderScript or not RenderScript](#renderscript-or-not-renderscript)
-* [TODO](#todo)
 * [Change logs](#change-logs)
 * [Contributing](#contributing)
 * [Credits](#credits)
@@ -24,6 +27,16 @@ Sample app
 =======
 [Download the sample app on the Google Play store.](https://play.google.com/store/apps/details?id=fr.tvbarthel.lib.blurdialogfragment.sample)
 
+Gradle dependency
+=======
+Since the library is promoted on maven central, just add a new gradle dependency :
+
+```java
+    compile 'fr.tvbarthel.blurdialogfragment:lib:2.1.4'
+```
+
+Don't forget to check the [Use RenderScript in Your Project] (#use-renderscript-in-your-project) if you're planning to use it.
+
 Example
 =======
 Activity with action bar [blurRadius 4, downScaleFactor 5.0] : 
@@ -32,16 +45,26 @@ Activity with action bar [blurRadius 4, downScaleFactor 5.0] :
 Fullscreen activity [blurRadius 2, downScaleFactor 8.0] : 
 ![full screen blur](/static/full_screen_blur.png)
 
-Dependency
-=======
-In order to use this library, just add a new gradle dependency : [BlurDialogFragment dependency](https://github.com/tvbarthel/maven#usage) 
+Use RenderScript in Your Project
+======
+
+Simply add this line to your build.gradle
+
+```
+    defaultConfig {
+        ...
+        renderscriptTargetApi 22
+        renderscriptSupportModeEnabled true
+        ...
+    }
+```
 
 Simple usage using inheritance
 =======
 If you are using **android.app.DialogFragment** : extends **BlurDialogFragment**. 
 Play with the blur radius and the down scale factor to obtain the perfect blur.
 
-Don't forget to enable log in order to keep on eye the perfomance.
+Don't forget to enable log if you want to keep on eye the performance.
 
 ```java
 /**
@@ -49,24 +72,13 @@ Don't forget to enable log in order to keep on eye the perfomance.
  */
 public class SampleDialogFragment extends BlurDialogFragment {
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.debug(true);
-        this.setBlurRadius(4);
-        this.setDownScaleFactor(5.0f);
-        
-        ...
-    }
-    
-    ...
 }
 ```
 
 If you are using **android.support.v4.app.DialogFragment** : extends **SupportBlurDialogFragment**. 
 Play with the blur radius and the down scale factor to obtain the perfect blur.
 
-Don't forget to enable log in order to keep on eye the perfomance.
+Don't forget to enable log in order to keep on eye the performance.
 
 ```java
 /**
@@ -74,32 +86,98 @@ Don't forget to enable log in order to keep on eye the perfomance.
  */
 public class SampleDialogFragment extends SupportBlurDialogFragment {
 
+}
+```
+
+Customize your blurring effect
+======
+```java
+
+/**
+ * Simple fragment with a customized blurring effect.
+ */
+public class SampleDialogFragment extends BlurDialogFragment {
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.debug(true);
-        this.setBlurRadius(4);
-        this.setDownScaleFactor(5.0f);
-        
         ...
     }
     
+    @Override
+    protected float getDownScaleFactor() {
+        // Allow to customize the down scale factor.
+        return 5.0;
+    }
+
+    @Override
+    protected int getBlurRadius() {
+        // Allow to customize the blur radius factor.
+        return 7;
+    }
+    
+    @Override
+    protected boolean isActionBarBlurred() {
+        // Enable or disable the blur effect on the action bar.
+        // Disabled by default.
+        return true;
+    }
+    
+    @Override
+    protected boolean isDimmingEnable() {
+        // Enable or disable the dimming effect.
+        // Disabled by default.
+        return true;
+    }
+
+    @Override
+    protected boolean isRenderScriptEnable() {
+        // Enable or disable the use of RenderScript for blurring effect
+        // Disabled by default.
+        return true;
+    }
+    
+    @Override
+    protected boolean isDebugEnable() {
+        // Enable or disable debug mode.
+        // False by default.
+        return true;
+    }
     ...
-}
 ```
 
 Default values are set to : 
  ```java
+ 
     /**
      * Since image is going to be blurred, we don't care about resolution.
-     * Down scale factor reduces blurring time and memory allocation.
+     * Down scale factor to reduce blurring time and memory allocation.
      */
-    private static final float BLUR_DOWN_SCALE_FACTOR = 4.0f;
+    static final float DEFAULT_BLUR_DOWN_SCALE_FACTOR = 4.0f;
 
     /**
-     * Radius used to blur the background.
+     * Radius used to blur the background
      */
-    private static final int BLUR_RADIUS = 8;
+    static final int DEFAULT_BLUR_RADIUS = 8;
+
+    /**
+     * Default dimming policy.
+     */
+    static final boolean DEFAULT_DIMMING_POLICY = false;
+
+    /**
+     * Default debug policy.
+     */
+    static final boolean DEFAULT_DEBUG_POLICY = false;
+
+    /**
+     * Default action bar blurred policy.
+     */
+    static final boolean DEFAULT_ACTION_BAR_BLUR = false;
+
+    /**
+     * Default use of RenderScript.
+     */
+    static final boolean DEFAULT_USE_RENDERSCRIPT = false;
     
 ```
 
@@ -128,6 +206,9 @@ public class SampleDialogFragment extends MyCustomDialogFragment {
         mBlurEngine.debug(mDebugEnable);
         mBlurEngine.setBlurRadius(8);
         mBlurEngine.setDownScaleFactor(8f);
+        mBlurEngine.debug(true);
+        mBlurEngine.setBlurActionBar(true);
+        mBlurEngine.setUseRenderScript(true);
     }
     
     @Override
@@ -199,19 +280,22 @@ Known bugs
 
 RenderScript or not RenderScript
 =======
-Since ScriptIntrinsicBlur seems to doens't work with RGB_565 Bitmap (used to reduce by half Bitmap allocation) I keep thinking about using RenderScript for applying blur effect.
+Thanks to [amasciul](https://github.com/amasciul) blurring effect can now be achieved using ScriptIntrinsicBlur (v1.1.0).
 
 Find more information on the [memory trace](http://tvbarthel.github.io/blur-dialog-fragment.html) and on the [execution time](http://trickyandroid.com/advanced-blurring-techniques/#comment-1557039595).
 
 
-
-
-TODO
-=======
-* Implement SherlockBlurDialogFragment since actionbarsherlock and appcompat are mutually exclusive.
-
 Change logs
 =======
+* 2.1.4 : Fix NPE during the blurring process thanks to [Anth06ny](https://github.com/Anth06ny), [jacobtabak](https://github.com/jacobtabak) and [serega2593](https://github.com/serega2593) reports.
+* 2.1.3 : Remove unused resources thanks to [ligol](https://github.com/ligol) report.
+* 2.1.2 : Rework support of translucent status bar thanks to [wangsai-silence](https://github.com/wangsai-silence) report.
+* 2.1.1 : Fix usage without renderscript as VerifyError was fired.
+* 2.1.0 : Support AppCompatActivity and fix several bugs thanks to [jacobtabak](https://github.com/jacobtabak).
+* 2.0.1 : BlurEngine is back again (restore "avoiding inheritance" usage, thanks to [sergiopantoja](https://github.com/sergiopantoja) report).
+* 2.0.0 : Min SDK 9+, don't forget to check the above section "Use RenderScript in Your Project". (thanks to [ligol](https://github.com/ligol)).
+* 1.1.0 : Allow to use RenderScript (thank to [amasciul](https://github.com/amasciul)).
+* 1.0.0 : Animate blurring effect, support tablet, tweak nav bar offset and reduce memory allocation.
 * 0.1.2 : Fix bottom offset introduce by the navigation bar on Lollipop.
 * 0.1.1 : Fix top offset when using Toolbar.
 * 0.1.0 : Support appcompat-v7:21.
@@ -251,3 +335,5 @@ Special Thanks to ...
 Pavlo Dudka [https://github.com/paveldudka/](https://github.com/paveldudka/) , for his impressive article on [Advanced blurring techniques](http://trickyandroid.com/advanced-blurring-techniques/).
 
 Vincent Brison [https://github.com/vincentbrison](https://github.com/vincentbrison) , for his early day support.
+
+Alexandre Masciulli [https://github.com/amasciul](https://github.com/amasciul) , for the integration of RenderScript.

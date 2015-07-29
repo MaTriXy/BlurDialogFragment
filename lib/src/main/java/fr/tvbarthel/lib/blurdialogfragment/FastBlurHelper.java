@@ -1,11 +1,12 @@
 package fr.tvbarthel.lib.blurdialogfragment;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 
 /**
  * Helper used to apply Fast blur algorithm on bitmap.
  */
-public final class FastBlurHelper {
+final class FastBlurHelper {
 
     /**
      * non instantiable helper
@@ -22,7 +23,22 @@ public final class FastBlurHelper {
      * @param canReuseInBitmap true if bitmap must be reused without blur
      * @return blurred bitmap
      */
+    @SuppressLint("NewApi")
     public static Bitmap doBlur(Bitmap sentBitmap, int radius, boolean canReuseInBitmap) {
+
+        if (radius < 1) {
+            return (null);
+        }
+
+        Bitmap bitmap;
+        if (canReuseInBitmap || (sentBitmap.getConfig() == Bitmap.Config.RGB_565)) {
+            // if RenderScript is used and bitmap is in RGB_565, it will
+            // necessarily be copied when converting to ARGB_8888
+            bitmap = sentBitmap;
+        } else {
+            bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
+        }
+
 
         // Stack Blur v1.0 from
         // http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html
@@ -51,17 +67,6 @@ public final class FastBlurHelper {
         // the following line:
         //
         // Stack Blur Algorithm by Mario Klingemann <mario@quasimondo.com>
-
-        Bitmap bitmap;
-        if (canReuseInBitmap) {
-            bitmap = sentBitmap;
-        } else {
-            bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
-        }
-
-        if (radius < 1) {
-            return (null);
-        }
 
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();

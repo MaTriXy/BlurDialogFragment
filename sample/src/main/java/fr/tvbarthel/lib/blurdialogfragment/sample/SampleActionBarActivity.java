@@ -3,6 +3,7 @@ package fr.tvbarthel.lib.blurdialogfragment.sample;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,45 +11,58 @@ import android.widget.CheckBox;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import fr.tvbarthel.lib.blurdialogfragment.SupportBlurDialogFragment;
 
-
-public class SampleActionBarActivity extends ActionBarActivity implements View.OnClickListener {
+public class SampleActionBarActivity extends AppCompatActivity implements View.OnClickListener {
 
     /**
      * Seek bar used to change the blur radius.
      */
-    SeekBar mBlurRadiusSeekbar;
+    private SeekBar mBlurRadiusSeekbar;
 
     /**
      * TextView used to display the current blur radius.
      */
-    TextView mBlurRadiusTextView;
+    private TextView mBlurRadiusTextView;
 
     /**
      * Prefix used to explain blur radius.
      */
-    String mBlurPrefix;
+    private String mBlurPrefix;
 
     /**
      * Seek bar used to change the down scale factor.
      */
-    SeekBar mDownScaleFactorSeekbar;
+    private SeekBar mDownScaleFactorSeekbar;
 
     /**
      * TextView used to display the current down scale factor.
      */
-    TextView mDownScaleFactorTextView;
+    private TextView mDownScaleFactorTextView;
 
     /**
      * Checkbox used to enable or disable debug mode.
      */
-    CheckBox mDebugMode;
+    private CheckBox mDebugMode;
 
     /**
      * Prefix used to explain down scale factor.
      */
-    String mDownScalePrefix;
+    private String mDownScalePrefix;
+
+    /**
+     * Checkbox used to enable / disable dimming effect.
+     */
+    private CheckBox mDimmingEnable;
+
+    /**
+     * Checkbox used to enable / disable blur effect on action bar.
+     */
+    private CheckBox mBlurredActionBar;
+
+    /**
+     * Checkbox used to enable / disable use of RenderScript
+     */
+    private CheckBox mUseRenderScript;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +75,9 @@ public class SampleActionBarActivity extends ActionBarActivity implements View.O
         mDownScaleFactorTextView = ((TextView) findViewById(R.id.downScalefactor));
         mDownScaleFactorSeekbar = ((SeekBar) findViewById(R.id.downScaleFactorSeekbar));
         mDebugMode = ((CheckBox) findViewById(R.id.debugMode));
+        mDimmingEnable = ((CheckBox) findViewById(R.id.dimmingEnable));
+        mBlurredActionBar = ((CheckBox) findViewById(R.id.blur_actionbar_enable));
+        mUseRenderScript = ((CheckBox) findViewById(R.id.userendercript));
 
         setUpView();
     }
@@ -89,18 +106,15 @@ public class SampleActionBarActivity extends ActionBarActivity implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button:
-                SampleSupportDialogFragment fragment = new SampleSupportDialogFragment();
-                Bundle args = new Bundle();
-                args.putInt(
-                        SupportBlurDialogFragment.BUNDLE_KEY_BLUR_RADIUS,
-                        mBlurRadiusSeekbar.getProgress()
+                SampleSupportDialogFragment fragment
+                        = SampleSupportDialogFragment.newInstance(
+                        mBlurRadiusSeekbar.getProgress() + 1,
+                        (mDownScaleFactorSeekbar.getProgress() / 10f) + 2,
+                        mDimmingEnable.isChecked(),
+                        mDebugMode.isChecked(),
+                        mBlurredActionBar.isChecked(),
+                        mUseRenderScript.isChecked()
                 );
-                args.putFloat(
-                        SupportBlurDialogFragment.BUNDLE_KEY_DOWN_SCALE_FACTOR,
-                        mDownScaleFactorSeekbar.getProgress()
-                );
-                fragment.setArguments(args);
-                fragment.debug(mDebugMode.isChecked());
                 fragment.show(getSupportFragmentManager(), "blur_sample");
                 break;
             default:
@@ -116,7 +130,7 @@ public class SampleActionBarActivity extends ActionBarActivity implements View.O
         mBlurRadiusSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mBlurRadiusTextView.setText(mBlurPrefix + progress);
+                mBlurRadiusTextView.setText(mBlurPrefix + (progress + 1));
             }
 
             @Override
@@ -133,7 +147,7 @@ public class SampleActionBarActivity extends ActionBarActivity implements View.O
         mDownScaleFactorSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mDownScaleFactorTextView.setText(mDownScalePrefix + progress);
+                mDownScaleFactorTextView.setText(mDownScalePrefix + (progress / 10f + 2));
             }
 
             @Override
@@ -151,7 +165,7 @@ public class SampleActionBarActivity extends ActionBarActivity implements View.O
         mDownScalePrefix = getString(R.string.activity_sample_down_scale_factor);
 
         //set default blur radius to 8.
-        mBlurRadiusSeekbar.setProgress(8);
-        mDownScaleFactorSeekbar.setProgress(4);
+        mBlurRadiusSeekbar.setProgress(7);
+        mDownScaleFactorSeekbar.setProgress(20);
     }
 }
