@@ -31,8 +31,8 @@ Gradle dependency
 =======
 Since the library is promoted on maven central, just add a new gradle dependency :
 
-```java
-    compile 'fr.tvbarthel.blurdialogfragment:lib:2.1.4'
+```groovy
+compile 'fr.tvbarthel.blurdialogfragment:lib:2.1.5'
 ```
 
 Don't forget to check the [Use RenderScript in Your Project] (#use-renderscript-in-your-project) if you're planning to use it.
@@ -50,13 +50,13 @@ Use RenderScript in Your Project
 
 Simply add this line to your build.gradle
 
-```
-    defaultConfig {
-        ...
-        renderscriptTargetApi 22
-        renderscriptSupportModeEnabled true
-        ...
-    }
+```groovy
+defaultConfig {
+    ...
+    renderscriptTargetApi 22
+    renderscriptSupportModeEnabled true
+    ...
+}
 ```
 
 Simple usage using inheritance
@@ -147,38 +147,36 @@ public class SampleDialogFragment extends BlurDialogFragment {
 
 Default values are set to : 
  ```java
- 
-    /**
-     * Since image is going to be blurred, we don't care about resolution.
-     * Down scale factor to reduce blurring time and memory allocation.
-     */
-    static final float DEFAULT_BLUR_DOWN_SCALE_FACTOR = 4.0f;
+/**
+ * Since image is going to be blurred, we don't care about resolution.
+ * Down scale factor to reduce blurring time and memory allocation.
+ */
+static final float DEFAULT_BLUR_DOWN_SCALE_FACTOR = 4.0f;
 
-    /**
-     * Radius used to blur the background
-     */
-    static final int DEFAULT_BLUR_RADIUS = 8;
+/**
+ * Radius used to blur the background
+ */
+static final int DEFAULT_BLUR_RADIUS = 8;
 
-    /**
-     * Default dimming policy.
-     */
-    static final boolean DEFAULT_DIMMING_POLICY = false;
+/**
+ * Default dimming policy.
+ */
+static final boolean DEFAULT_DIMMING_POLICY = false;
 
-    /**
-     * Default debug policy.
-     */
-    static final boolean DEFAULT_DEBUG_POLICY = false;
+/**
+ * Default debug policy.
+ */
+static final boolean DEFAULT_DEBUG_POLICY = false;
 
-    /**
-     * Default action bar blurred policy.
-     */
-    static final boolean DEFAULT_ACTION_BAR_BLUR = false;
+/**
+ * Default action bar blurred policy.
+ */
+static final boolean DEFAULT_ACTION_BAR_BLUR = false;
 
-    /**
-     * Default use of RenderScript.
-     */
-    static final boolean DEFAULT_USE_RENDERSCRIPT = false;
-    
+/**
+ * Default use of RenderScript.
+ */
+static final boolean DEFAULT_USE_RENDERSCRIPT = false;
 ```
 
 Avoiding inheritance
@@ -287,6 +285,7 @@ Find more information on the [memory trace](http://tvbarthel.github.io/blur-dial
 
 Change logs
 =======
+* 2.1.5 : Minor fixes thanks to [Edward S](https://github.com/edward-s) and [Tommy Chan](https://github.com/tommytcchan).
 * 2.1.4 : Fix NPE during the blurring process thanks to [Anth06ny](https://github.com/Anth06ny), [jacobtabak](https://github.com/jacobtabak) and [serega2593](https://github.com/serega2593) reports.
 * 2.1.3 : Remove unused resources thanks to [ligol](https://github.com/ligol) report.
 * 2.1.2 : Rework support of translucent status bar thanks to [wangsai-silence](https://github.com/wangsai-silence) report.
@@ -316,6 +315,7 @@ Credits go to Thomas Barthélémy [https://github.com/tbarthel-fr](https://githu
 
 License
 =====================
+```
 Copyright (C) 2014 tvbarthel
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -329,6 +329,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+```
 
 Special Thanks to ...
 ========
